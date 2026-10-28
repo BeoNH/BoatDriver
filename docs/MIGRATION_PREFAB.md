@@ -11,7 +11,7 @@ object spawn liên tục đi qua pool. **Hành vi giữ 1:1 theo GAME_SPEC** —
 - Prefab ở `assets/prefabs/` (không qua `resources`), tham chiếu bằng `@property(Prefab)`:
   `GameApp` → screen prefabs; `GameScreen` → entity prefabs.
 - `SPRITE_DEFS` giữ nguyên cho collision box/origin và đổi frame runtime.
-- Pool: `core/Pool.ts` bọc `NodePool` theo prefab; `Entity.destroy()` → trả pool.
+- Pool: `core/Pool.ts` = `Map<key, Node[]>` theo def; `Entity.destroy()` → trả pool.
 - Vẫn giữ toạ độ C3 (`placeC3`, y xuống) trong logic.
 
 ## Phân vai

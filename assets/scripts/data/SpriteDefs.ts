@@ -1,5 +1,6 @@
 // AUTO-GENERATED from original sprite metadata. w/h = source pixel size,
 // ox/oy = origin (0..1, y down), pts = image points [name, x, y] (0..1, y down).
+// đã lọc def của chế độ level / không dùng (2026-10).
 export interface FrameDef { file: string; w: number; h: number; ox: number; oy: number; pts: [string, number, number][]; }
 export interface SpriteDef { speed: number; loop: boolean; frames: FrameDef[]; }
 export const SPRITE_DEFS: Record<string, SpriteDef> = {
@@ -236,14 +237,6 @@ export const SPRITE_DEFS: Record<string, SpriteDef> = {
     "ox": 0.51181,
     "oy": 0.50394,
     "pts": []
-   },
-   {
-    "file": "Btn_restart_1",
-    "w": 125,
-    "h": 125,
-    "ox": 0.52,
-    "oy": 0.504,
-    "pts": []
    }
   ]
  },
@@ -393,48 +386,6 @@ export const SPRITE_DEFS: Record<string, SpriteDef> = {
    }
   ]
  },
- "Finishline": {
-  "speed": 5,
-  "loop": false,
-  "frames": [
-   {
-    "file": "Finishline",
-    "w": 396,
-    "h": 187,
-    "ox": 0.5,
-    "oy": 0.91979,
-    "pts": []
-   }
-  ]
- },
- "Map": {
-  "speed": 5,
-  "loop": false,
-  "frames": [
-   {
-    "file": "Map",
-    "w": 32,
-    "h": 274,
-    "ox": 0.21875,
-    "oy": 0.5,
-    "pts": []
-   }
-  ]
- },
- "MapMark": {
-  "speed": 5,
-  "loop": false,
-  "frames": [
-   {
-    "file": "MapMark",
-    "w": 20,
-    "h": 13,
-    "ox": 0,
-    "oy": 0.53846,
-    "pts": []
-   }
-  ]
- },
  "CashPickiUp": {
   "speed": 0,
   "loop": false,
@@ -453,42 +404,6 @@ export const SPRITE_DEFS: Record<string, SpriteDef> = {
     "h": 171,
     "ox": 0.50336,
     "oy": 0.88304,
-    "pts": []
-   }
-  ]
- },
- "Lvl": {
-  "speed": 0,
-  "loop": false,
-  "frames": [
-   {
-    "file": "Lvl_0",
-    "w": 178,
-    "h": 178,
-    "ox": 0.50562,
-    "oy": 0.50562,
-    "pts": []
-   },
-   {
-    "file": "Lvl_1",
-    "w": 178,
-    "h": 178,
-    "ox": 0.50562,
-    "oy": 0.50562,
-    "pts": []
-   }
-  ]
- },
- "btn_Random": {
-  "speed": 0,
-  "loop": false,
-  "frames": [
-   {
-    "file": "btn_Random",
-    "w": 294,
-    "h": 128,
-    "ox": 0.5034,
-    "oy": 0.53906,
     "pts": []
    }
   ]
@@ -695,76 +610,6 @@ export const SPRITE_DEFS: Record<string, SpriteDef> = {
    }
   ]
  },
- "WaterSplash": {
-  "speed": 30,
-  "loop": false,
-  "frames": [
-   {
-    "file": "WaterSplash_0",
-    "w": 121,
-    "h": 110,
-    "ox": 1.01653,
-    "oy": 0.12727,
-    "pts": []
-   },
-   {
-    "file": "WaterSplash_1",
-    "w": 237,
-    "h": 136,
-    "ox": 1.01688,
-    "oy": 0.08088,
-    "pts": []
-   },
-   {
-    "file": "WaterSplash_2",
-    "w": 273,
-    "h": 203,
-    "ox": 0.99634,
-    "oy": 0.06897,
-    "pts": []
-   },
-   {
-    "file": "WaterSplash_3",
-    "w": 275,
-    "h": 209,
-    "ox": 0.97818,
-    "oy": 0.11962,
-    "pts": []
-   },
-   {
-    "file": "WaterSplash_4",
-    "w": 277,
-    "h": 247,
-    "ox": 0.9639,
-    "oy": 0.04049,
-    "pts": []
-   },
-   {
-    "file": "WaterSplash_5",
-    "w": 277,
-    "h": 249,
-    "ox": 0.97834,
-    "oy": 0.04819,
-    "pts": []
-   },
-   {
-    "file": "WaterSplash_6",
-    "w": 277,
-    "h": 249,
-    "ox": 0.97834,
-    "oy": 0.00803,
-    "pts": []
-   },
-   {
-    "file": "WaterSplash_7",
-    "w": 277,
-    "h": 249,
-    "ox": 0.97473,
-    "oy": 0.02008,
-    "pts": []
-   }
-  ]
- },
  "shieldIcon": {
   "speed": 5,
   "loop": false,
@@ -790,51 +635,6 @@ export const SPRITE_DEFS: Record<string, SpriteDef> = {
     "ox": 0.502,
     "oy": 0.69444,
     "pts": []
-   }
-  ]
- },
- "waydot": {
-  "speed": 0,
-  "loop": false,
-  "frames": [
-   {
-    "file": "",
-    "w": 1300,
-    "h": 20,
-    "ox": 0.5,
-    "oy": 0.5,
-    "pts": [
-     [
-      "Imagepoint 1",
-      1,
-      0.5
-     ],
-     [
-      "Imagepoint 2",
-      0,
-      0.5
-     ],
-     [
-      "Imagepoint 3",
-      1.63385,
-      0.5
-     ],
-     [
-      "Imagepoint 4",
-      -0.56615,
-      0.5
-     ],
-     [
-      "Image Point 5",
-      0.11077,
-      0.5
-     ],
-     [
-      "Image Point 6",
-      0.88385,
-      0.5
-     ]
-    ]
    }
   ]
  }

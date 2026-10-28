@@ -15,7 +15,7 @@ Không ads / analytics / network / URL ngoài.
   `C3` (lerp, anglelerp, random, choose, `Every`).
 - `assets/scripts/screens/` — `MenuScreen`, `GameScreen` (component trên root prefab 854×480 anchor (0,1)). Game chỉ endless: Menu → Game, không level/LevelSelect/Finish.
 - `assets/scripts/game/` — simulation + view của màn chơi (World, entities + `EntityPrefabs` registry, Hud, ResultPopup).
-- `assets/scripts/data/` — `GameConfig` (bảng), `SpriteDefs` (generated: size/origin/image point gốc — không sửa tay).
+- `assets/scripts/data/` — `GameConfig` (bảng), `SpriteDefs` (generated từ C3: size/origin/image point gốc — không sửa số liệu; đã lọc def level/không dùng, generator không có trong repo).
 - `assets/resources/textures|audio` — load bằng `Res.frame('<file>')`, `Sfx.play('<name>', dB)`.
 
 ## Quy ước
@@ -24,7 +24,8 @@ Không ads / analytics / network / URL ngoài.
   Bake = one-shot: rebake đổi uuid → mất ref đã wire. Prefab đã wire thì chỉnh trong editor/MCP.
 - Entity mới: bake prefab tên = def, thêm vào `GameScreen.entityPrefabs`; spawn qua `new Entity(...)` (Pool + registry).
 - Manager-driven update: chỉ `GameScreen.update` (và `MenuScreen`) là Cocos `update`; World gọi xuống theo thứ tự spec §6.
-  Component gameplay (`FrameAnim`...) không tự `update`.
+  Component gameplay (`FrameAnim`...) không tự `update`. Ngoại lệ: hiệu ứng UI thuần không ảnh hưởng gameplay (`SinePulse`).
+- Không chỉnh engine toàn cục bằng code (`dynamicAtlasManager`, `macro`...). Không tạo Texture2D/SpriteFrame runtime — dùng asset.
 - State tĩnh (Pool, EntityPrefabs, Input, engine) do `GameScreen.owner` quản: `destroy()` trễ cuối frame nên khi Restart
   `onDestroy` màn cũ chạy sau `onLoad` màn mới.
 - Game logic chạy trong toạ độ C3 (y xuống, góc CW) rồi convert khi render (`setPosition(x,-y)`, `angle=-a`).

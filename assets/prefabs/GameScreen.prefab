@@ -1460,6 +1460,10 @@
       {
         "__uuid__": "a4c56bba-ce6d-422f-9199-9719d437f69f",
         "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "fd2acfca-592e-4d44-ac9d-d9b76fb0591c",
+        "__expectedType__": "cc.Prefab"
       }
     ]
   },

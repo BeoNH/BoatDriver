@@ -1,4 +1,5 @@
 import { sys } from 'cc';
+import { BOAT_COUNT } from '../data/GameConfig';
 
 const SAVE_KEY = 'Boat DriversaveData';
 
@@ -7,7 +8,6 @@ export class GameState {
     static cash = 0;
     static best = 0;
     static selectedBoat = 0;
-    static score = 0;
     private static dict: Record<string, number> = {};
 
     static load(): void {
@@ -19,7 +19,7 @@ export class GameState {
         this.dict['Car0'] = 1;
         if (this.dict['Cash'] !== undefined) this.cash = Number(this.dict['Cash']) || 0;
         if (this.dict['Best'] !== undefined) this.best = Number(this.dict['Best']) || 0;
-        if (this.dict['SelectedCar'] !== undefined) this.selectedBoat = Number(this.dict['SelectedCar']) || 0;
+        if (this.dict['SelectedCar'] !== undefined) this.selectedBoat = Math.min(BOAT_COUNT - 1, Math.max(0, (Number(this.dict['SelectedCar']) || 0) | 0));
     }
 
     static owns(boat: number): boolean {

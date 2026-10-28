@@ -1,4 +1,4 @@
-import { Component, Node, Prefab, dynamicAtlasManager, instantiate, _decorator } from 'cc';
+import { Component, Node, Prefab, instantiate, _decorator } from 'cc';
 import { SCREEN_H, SCREEN_W } from '../data/GameConfig';
 import { Res } from './Res';
 import { GameState } from './Save';
@@ -23,8 +23,6 @@ export class GameApp extends Component {
 
     onLoad(): void {
         GameApp.instance = this;
-        // Dynamic atlas làm mất sprite ngẫu nhiên trong Game View của editor (có texture runtime); game nhỏ, tắt đi.
-        dynamicAtlasManager.enabled = false;
         // Node con tạo runtime: AudioSource không dính vào Canvas của scene (an toàn khi save lúc đang Game View).
         const audioHost = new Node('Audio');
         this.node.addChild(audioHost);

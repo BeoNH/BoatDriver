@@ -1,5 +1,5 @@
 import { Color, Label, Node } from 'cc';
-import { random } from '../core/C3';
+import { random, randomInt } from '../core/C3';
 import { FrameAnim } from '../core/FrameAnim';
 import { Pool } from '../core/Pool';
 import { placeC3, setOpacity } from '../core/UIKit';
@@ -15,7 +15,7 @@ const BONUS_KEY = 'label:bonus';
 /** Explosion, bonus text, water spray and the flying cash bag. */
 export class Fx {
     private readonly spray: Particles;
-    private explosions: Entity[] = [];
+    private explosions: { e: Entity; anim: FrameAnim }[] = [];
     private texts: BonusText[] = [];
     private bags: FlyingBag[] = [];
     private sprayAcc = 0;
@@ -31,7 +31,7 @@ export class Fx {
         anim.onFrame = (f) => { e.frame = f; };
         anim.play(0);
         e.scale = (y - VP_Y) / 150;
-        this.explosions.push(e);
+        this.explosions.push({ e, anim });
     }
 
     /** §6.5 Bonus(n) text. */
@@ -59,7 +59,7 @@ export class Fx {
         const dirs = [[0, 1], [-0.6, 0.8], [0.6, 0.8]];
         while (this.sprayAcc >= 1) {
             this.sprayAcc -= 1;
-            const d = dirs[Math.floor(Math.random() * 3)];
+            const d = dirs[randomInt(3)];
             const sp = speed * random(0.8, 1.1);
             this.spray.emit({ x, y, vx: d[0] * sp, vy: d[1] * sp, life: 0.5, size0: 8, size1: 22, alpha: 0.5, color: WATER });
         }
@@ -73,16 +73,16 @@ export class Fx {
     }
 
     private updateExplosions(dt: number, s: number, vpX: number): void {
-        for (const e of this.explosions) {
+        for (const { e, anim } of this.explosions) {
             e.x += s * (e.x - vpX) * dt;
             e.y += s * (e.y - VP_Y) * dt;
             e.scale = (e.y - VP_Y) / 150;
-            e.node.getComponent(FrameAnim)!.setTime(e.age * 15);
+            anim.setTime(e.age * 15);
             e.alpha = Math.max(0, 1 - e.age / 0.6);
             if (e.age >= 0.6) e.alive = false;
             e.sync(dt);
         }
-        this.explosions = this.explosions.filter((e) => {
+        this.explosions = this.explosions.filter(({ e }) => {
             if (!e.alive) e.destroy();
             return e.alive;
         });

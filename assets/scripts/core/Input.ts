@@ -1,4 +1,4 @@
-import { EventKeyboard, EventTouch, input, Input as CCInput, KeyCode, Node } from 'cc';
+import { EventKeyboard, EventTouch, game, Game, input, Input as CCInput, KeyCode, Node, sys } from 'cc';
 
 /** Trạng thái phím giữ + nút touch đang giữ (C3 Keyboard.IsKeyDown / Touch.IsTouchingObject). */
 export class Input {
@@ -10,6 +10,9 @@ export class Input {
         this.bound = true;
         input.on(CCInput.EventType.KEY_DOWN, (e: EventKeyboard) => this.keys.add(e.keyCode));
         input.on(CCInput.EventType.KEY_UP, (e: EventKeyboard) => this.keys.delete(e.keyCode));
+        // Mất focus (alt-tab/đổi tab) thì không nhận keyup -> phím kẹt. EVENT_HIDE (visibilitychange) + window blur.
+        game.on(Game.EVENT_HIDE, () => this.clear());
+        if (sys.isBrowser) window.addEventListener('blur', () => this.clear());
     }
 
     static isDown(...codes: KeyCode[]): boolean {

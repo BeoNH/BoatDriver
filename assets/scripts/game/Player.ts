@@ -39,8 +39,7 @@ export class Player {
     }
 
     /** Controls disabled (GameOn != 1): velocity decays, no steering. */
-    coast(dt: number, straightenRate: number): void {
-        this.ent.angle = anglelerp(this.ent.angle, 0, straightenRate * dt);
+    coast(dt: number): void {
         this.moveX(dt, 0);
     }
 

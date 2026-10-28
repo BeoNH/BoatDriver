@@ -28,11 +28,12 @@ function setOpacity(node, o) {
   const op = node.getComponent(C.UIOpacity) || node.addComponent(C.UIOpacity);
   op.opacity = Math.round(Math.max(0, Math.min(1, o)) * 255);
 }
-/** UIKit.makeSprite. opts: w,h,opacity(0..1),angle(C3 deg CW),mirror,frame,additive,color. */
+/** UIKit.makeSprite. opts: w,h,opacity(0..1),angle(C3 deg CW),mirror,frame,additive,color,file+fw+fh (texture trực tiếp). */
 function sprite(parent, def, x, y, opts) {
   opts = opts || {};
   const fi = opts.frame || 0;
-  const fd = DEFS[def] && DEFS[def].frames[fi];
+  // opts.file (+ fw,fh natural size): sprite thẳng từ texture file, không qua SPRITE_DEFS (anchor giữa).
+  const fd = opts.file ? { file: opts.file, w: opts.fw, h: opts.fh, ox: 0.5, oy: 0.5 } : DEFS[def] && DEFS[def].frames[fi];
   if (!fd) throw new Error('unknown sprite def/frame: ' + def + ' frame ' + fi);
   const [n, ut] = _node(parent, def);
   const sp = n.addComponent(C.Sprite);
@@ -68,18 +69,6 @@ function label(parent, text, x, y, opts) {
   n.setPosition(x, -y, 0);
   return n;
 }
-/** UIKit.makeRect (anchor (0,1), white.png tinted). color: [r,g,b,a] | {r,g,b,a}. */
-function rect(parent, x, y, w, h, color) {
-  const [n, ut] = _node(parent, 'Rect');
-  const sp = n.addComponent(C.Sprite);
-  sp.sizeMode = C.Sprite.SizeMode.CUSTOM;
-  sp.spriteFrame = _frames['white'];
-  sp.color = _col(color);
-  ut.setContentSize(w, h);
-  ut.setAnchorPoint(0, 1);
-  n.setPosition(x, -y, 0);
-  return n;
-}
 /** Empty node. opts: w,h,ax,ay (anchor, default 0.5/0.5; ax=0,ay=1 = C3 top-left screen root), x,y (C3 coords). */
 function group(parent, name, opts) {
   opts = opts || {};
@@ -89,4 +78,4 @@ function group(parent, name, opts) {
   n.setPosition(opts.x || 0, -(opts.y || 0), 0);
   return n;
 }
-const lib = { init, sprite, label, rect, group, setOpacity };
+const lib = { init, sprite, label, group, setOpacity };

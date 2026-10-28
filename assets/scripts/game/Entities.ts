@@ -106,12 +106,6 @@ export class Entity {
         if (this.y > KILL_Y) this.alive = false;
     }
 
-    setFrame(f: number): void {
-        if (f === this.frame) return;
-        this.frame = f;
-        setSpriteFrame(this.node, this.def, f);
-    }
-
     /** Axis-aligned box from origin + size (§6 collision rule). */
     box(): Box {
         const fd = this.fd, w = fd.w * this.scale, h = fd.h * this.scale;

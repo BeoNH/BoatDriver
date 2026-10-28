@@ -20,15 +20,11 @@ export class FrameAnim extends Component {
     onFrame?: (f: number) => void;
     private cur = -1;
 
-    get frame(): number { return this.cur < 0 ? 0 : this.cur; }
-
     play(from = 0): void {
         this.t = from;
         this.cur = -1;
         this.apply();
     }
-
-    stop(): void { this.cur = -1; }
 
     setTime(frames: number): void {
         this.t = frames;

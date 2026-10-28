@@ -60,7 +60,6 @@ export class World {
         this.player = new Player(layers.road, GameState.selectedBoat);
         this.fx = new Fx(layers.ground, layers.fx, layers.ui, hud.dollarPos);
         this.cam.snap(this.player.x, this.player.y);
-        GameState.score = 0;
     }
 
     update(dt: number): void {
@@ -75,7 +74,7 @@ export class World {
         this.spawnPickups(dt);
         this.updateShield(dt);
         this.checkCollisions();
-        this.updateAudio(dt);
+        this.updateAudio();
         this.updateWater(dt);
         if (this.player) this.cam.follow(this.player.x, this.player.y, dt);
         if (this.player && this.gameOn !== LOST) this.fx.emitSpray(dt, this.s, this.player.x, this.player.y);
@@ -93,7 +92,6 @@ export class World {
 
     /** Applies end-of-run persistence (§6.10) and returns the popup data. */
     result(): ResultData {
-        GameState.score = this.score;
         GameState.best = Math.max(GameState.best, this.score);
         GameState.save();
         return { score: this.score, cash: GameState.cash, reward: this.reward, best: GameState.best };
@@ -122,7 +120,7 @@ export class World {
             p.ent.y = 435 - this.camDelay;
         } else if (this.gameOn === LOST) {
             this.s = lerp(this.s, 1, 0.5 * dt);
-            p.coast(dt, 0);
+            p.coast(dt);
             p.ent.y += 3000 * dt;
             p.ent.node.active = p.ent.y < 700;
         }
@@ -302,7 +300,7 @@ export class World {
 
     // ---- §6.9 audio / water --------------------------------------------------------------------------------------
 
-    private updateAudio(dt: number): void {
+    private updateAudio(): void {
         if (this.gameOn === PLAYING) {
             if (!this.engineOn && this.s > 0.5) { this.engineOn = true; Sfx.startEngine(); }
             this.engineDb = 1 - this.s / 2;

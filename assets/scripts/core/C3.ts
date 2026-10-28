@@ -25,10 +25,6 @@ export function choose<T>(...items: T[]): T {
     return items[Math.floor(Math.random() * items.length)];
 }
 
-export function distance(x1: number, y1: number, x2: number, y2: number): number {
-    return Math.hypot(x2 - x1, y2 - y1);
-}
-
 /** Âm lượng C3 (dB) → linear, clamp [0,1]. */
 export function dbToLinear(db: number): number {
     return Math.max(0, Math.min(1, Math.pow(10, db / 20)));

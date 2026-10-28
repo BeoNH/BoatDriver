@@ -33,7 +33,9 @@ def main():
     ts = open(os.path.join(ROOT, 'assets/scripts/data/SpriteDefs.ts'), encoding='utf8').read()
     m = re.search(r'SPRITE_DEFS\s*:[^=]*=\s*(\{.*\})\s*;', ts, re.S)
     defs = json.loads(re.sub(r',(\s*[}\]])', r'\1', m.group(1)))
-    files = sorted({f['file'] for d in defs.values() for f in d['frames']} | {'white'})
+    files = sorted({f['file'] for d in defs.values() for f in d['frames']})
+    spec_files = set(re.findall(r"file:\s*'(\w+)'", spec))  # sprite(..., {file: 'x'}) dùng texture trực tiếp
+    files = sorted(set(files) | spec_files)
     # 2) spriteFrame uuid cache (query asset-db for missing)
     cache = json.load(open(CACHE)) if os.path.exists(CACHE) else {}
     missing = [f for f in files if f not in cache]
@@ -61,7 +63,7 @@ def main():
             "for(const c of canvas.children.slice()) if(c.name.startsWith('__bake_')) c.destroy();\n"
             "await lib.init();\n"
             "const root=lib.group(canvas,%s,{w:854,h:480,ax:0,ay:1});\n"
-            "const out=await (async(sprite,label,rect,group)=>{\n%s\n})(lib.sprite,lib.label,lib.rect,lib.group);\n"
+            "const out=await (async(sprite,label,group)=>{\n%s\n})(lib.sprite,lib.label,lib.group);\n"
             "return (out&&out.uuid)||root.uuid;\n"
             "})();") % (json.dumps(defs), json.dumps({k: cache[k] for k in files}), json.dumps(mtl),
                                     lib, json.dumps(tmp), spec)

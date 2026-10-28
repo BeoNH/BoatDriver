@@ -4,10 +4,9 @@
 Cần Cocos editor mở project (MCP 21458). Idempotent: xoá prefab cũ, tạo lại, xoá node tạm; không save scene.
 Lưu ý: rebake đổi uuid prefab (delete + create) => wire `@property` SAU khi bake xong.
 
-Spec = thân hàm async, có sẵn `root` (node 854x480, anchor (0,1)) và `sprite, label, rect, group`; toạ độ C3 (y xuống):
-- `sprite(parent, def, x, y, {w,h,opacity,angle,mirror,frame,additive,color})` = UIKit.makeSprite (node tên = def)
+Spec = thân hàm async, có sẵn `root` (node 854x480, anchor (0,1)) và `sprite, label, group`; toạ độ C3 (y xuống):
+- `sprite(parent, def, x, y, {w,h,opacity,angle,mirror,frame,additive,color,file,fw,fh})` = UIKit.makeSprite (node tên = def); `file:'tex',fw,fh` = lấy texture trực tiếp (không cần SPRITE_DEFS, anchor giữa)
 - `label(parent, text, x, y, {size,align,color})` = makeLabel (Arial bold, lineHeight 1.2x, overflow NONE)
-- `rect(parent, x, y, w, h, [r,g,b,a])` = makeRect (white.png tint, anchor (0,1))
 - `group(parent, name, {w,h,ax,ay,x,y})` = node rỗng; trả về node, dùng làm parent cho con.
 
 Ví dụ:
