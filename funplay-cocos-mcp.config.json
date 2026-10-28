@@ -1,0 +1,27 @@
+{
+  "host": "127.0.0.1",
+  "port": 21458,
+  "portMode": "project",
+  "clientConfigEntries": {
+    "claude_code": {
+      "serverName": "cocos-boatdriver-58bcb2",
+      "url": "http://127.0.0.1:21458/",
+      "configPath": "C:\\Users\\hoang\\.claude.json",
+      "projectIdentity": "58bcb272f008b82bc5547527"
+    }
+  },
+  "toolProfile": "full",
+  "enabledTools": [],
+  "disabledTools": [],
+  "enabledToolCategories": [],
+  "disabledToolCategories": [],
+  "enableSessions": false,
+  "enableConsoleLogging": true,
+  "executeJavascriptSafetyChecks": true,
+  "autostart": true,
+  "maxInteractionLogEntries": 50,
+  "lastClientTargetId": "claude_code",
+  "activeToolProfileName": "",
+  "savedToolProfiles": [],
+  "language": "auto"
+}
