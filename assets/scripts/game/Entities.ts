@@ -1,7 +1,25 @@
-import { Node, UIOpacity, UITransform } from 'cc';
+import { Node, Prefab, UIOpacity, instantiate } from 'cc';
 import { Pool } from '../core/Pool';
 import { setOpacity, placeC3, setSpriteFrame } from '../core/UIKit';
 import { FrameDef, SPRITE_DEFS } from '../data/SpriteDefs';
+
+/** Registry prefab entity (key = prefab.data.name = def). GameScreen đăng ký ở onLoad, clear ở onDestroy. */
+export class EntityPrefabs {
+    private static map = new Map<string, Prefab>();
+
+    static register(list: Prefab[]): void {
+        for (const p of list) EntityPrefabs.map.set(p.data.name, p);
+    }
+
+    /** Dựng node mới từ prefab; thiếu prefab thì throw (không fallback dựng tay). */
+    static create(name: string): Node {
+        const p = EntityPrefabs.map.get(name);
+        if (!p) throw new Error(`EntityPrefabs: thiếu prefab '${name}' (wire GameScreen.entityPrefabs)`);
+        return instantiate(p);
+    }
+
+    static clear(): void { EntityPrefabs.map.clear(); }
+}
 
 /** Vanishing point Y (GAME_SPEC §6.1). */
 export const VP_Y = 288;
@@ -56,12 +74,8 @@ export class Entity {
 
     constructor(parent: Node, readonly def: string, public frame = 0, public x = 0, public y = 0) {
         // Node tái dùng được reset y hệt makeSprite tạo mới (frame/size/anchor, scale, angle, opacity, vị trí, layer).
-        // Material additive (Shield) được giữ vì pool theo key = def và mọi Entity cùng def dùng cùng blend.
-        const node = Pool.get(def, parent, () => {
-            const n = new Node(def);
-            n.addComponent(UITransform);
-            return n;
-        });
+        // Node từ prefab (additive của Shield nằm trong prefab); pool theo key = def.
+        const node = Pool.get(def, parent, () => EntityPrefabs.create(def));
         setSpriteFrame(node, def, frame);
         node.setScale(1, 1, 1);
         node.angle = 0;

@@ -4,6 +4,7 @@ import { Input } from '../core/Input';
 import { Pool } from '../core/Pool';
 import { Sfx } from '../core/Sfx';
 import { GameState } from '../core/Save';
+import { EntityPrefabs } from '../game/Entities';
 import { Hud } from '../game/Hud';
 import { ResultPopup } from '../game/ResultPopup';
 import { World } from '../game/World';
@@ -24,12 +25,19 @@ export class GameScreen extends Component {
     @property(Node) water: Node = null!;
     @property(Prefab) hudPrefab: Prefab = null!;
     @property(Prefab) popupPrefab: Prefab = null!;
+    /** Cars, CashPickiUp, shieldIcon, Shield, sider, sider2, Buildings, Explosion, BonusText (key = tên prefab). */
+    @property([Prefab]) entityPrefabs: Prefab[] = [];
+    /** Màn Game đang sở hữu state tĩnh (Pool, EntityPrefabs, Input, engine). Restart: node cũ bị destroy trễ
+     *  đến cuối frame nên onDestroy của nó chạy SAU onLoad của màn mới — chỉ owner mới được dọn. */
+    private static owner: GameScreen | null = null;
     private world!: World;
     private hud!: Hud;
 
     onLoad(): void {
+        GameScreen.owner = this;
+        GameScreen.resetShared();
+        EntityPrefabs.register(this.entityPrefabs);
         Input.bind();
-        Input.clear();
         const goMenu = () => GameApp.instance.go('Menu');
         const hudNode = instantiate(this.hudPrefab);
         this.uiLayer.addChild(hudNode);
@@ -58,8 +66,15 @@ export class GameScreen extends Component {
     }
 
     onDestroy(): void {
+        if (GameScreen.owner !== this) return;
+        GameScreen.owner = null;
+        GameScreen.resetShared();
+    }
+
+    private static resetShared(): void {
         Sfx.stopEngine();
         Input.clear();
         Pool.clear();
+        EntityPrefabs.clear();
     }
 }

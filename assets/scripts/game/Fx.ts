@@ -2,8 +2,8 @@ import { Color, Label, Node } from 'cc';
 import { random } from '../core/C3';
 import { FrameAnim } from '../core/FrameAnim';
 import { Pool } from '../core/Pool';
-import { makeLabel, placeC3, setOpacity } from '../core/UIKit';
-import { Entity, VP_Y } from './Entities';
+import { placeC3, setOpacity } from '../core/UIKit';
+import { Entity, EntityPrefabs, VP_Y } from './Entities';
 import { Particles } from './Particles';
 
 interface BonusText { label: Label; y: number; age: number; }
@@ -27,10 +27,7 @@ export class Fx {
     /** §6.5 EneDestroy explosion. */
     explode(x: number, y: number): void {
         const e = new Entity(this.top, 'Explosion', 0, x, y);
-        const anim = e.node.getComponent(FrameAnim) ?? e.node.addComponent(FrameAnim);
-        anim.def = 'Explosion';
-        anim.fps = 15;
-        anim.loop = false;
+        const anim = e.node.getComponent(FrameAnim)!;
         anim.onFrame = (f) => { e.frame = f; };
         anim.play(0);
         e.scale = (y - VP_Y) / 150;
@@ -39,8 +36,7 @@ export class Fx {
 
     /** §6.5 Bonus(n) text. */
     bonusText(x: number, n: number): void {
-        const node = Pool.get(BONUS_KEY, this.top, () =>
-            makeLabel(this.top, '', x, 240, { size: 24, align: 'center', color: new Color(0, 255, 0) }).node);
+        const node = Pool.get(BONUS_KEY, this.top, () => EntityPrefabs.create('BonusText'));
         const label = node.getComponent(Label)!;
         label.string = `+${n}`;
         placeC3(node, x, 240);

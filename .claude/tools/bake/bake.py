@@ -61,8 +61,8 @@ def main():
             "for(const c of canvas.children.slice()) if(c.name.startsWith('__bake_')) c.destroy();\n"
             "await lib.init();\n"
             "const root=lib.group(canvas,%s,{w:854,h:480,ax:0,ay:1});\n"
-            "await (async(sprite,label,rect,group)=>{\n%s\n})(lib.sprite,lib.label,lib.rect,lib.group);\n"
-            "return root.uuid;\n"
+            "const out=await (async(sprite,label,rect,group)=>{\n%s\n})(lib.sprite,lib.label,lib.rect,lib.group);\n"
+            "return (out&&out.uuid)||root.uuid;\n"
             "})();") % (json.dumps(defs), json.dumps({k: cache[k] for k in files}), json.dumps(mtl),
                                     lib, json.dumps(tmp), spec)
     if os.environ.get('BAKE_DUMP'):

@@ -4,7 +4,6 @@ import { Input } from '../core/Input';
 import { GameState } from '../core/Save';
 import { Sfx } from '../core/Sfx';
 import { FrameAnim } from '../core/FrameAnim';
-import { setAdditive } from '../core/UIKit';
 import { SPRITE_DEFS } from '../data/SpriteDefs';
 import { Camera } from './Camera';
 import { Box, Entity, OverlapTracker, overlap, prune } from './Entities';
@@ -229,7 +228,6 @@ export class World {
         this.powerUp = 2;
         this.shieldT = 0;
         this.shield = new Entity(this.layers.road, 'Shield');
-        setAdditive(this.shield.node);
     }
 
     /** Shield follows the player; after 10 s it flickers (0.05 on/off) for 2 s, then expires. */

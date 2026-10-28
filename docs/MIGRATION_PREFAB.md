@@ -43,9 +43,9 @@ object spawn liên tục đi qua pool. **Hành vi giữ 1:1 theo GAME_SPEC** —
 - [x] T201 coder — bake lib dùng chung `.claude/tools/bake/` (sprite/label/rect node theo opts như UIKit).
 - [x] T202 coder — `MenuScreen.prefab` + `MenuScreen` dùng `@property` (water, cars, btnPlay, btnBuy, priceTxt, cashTxt, bestTxt…). Dep T201.
 - [x] T203 coder — `Hud.prefab` + `ResultPopup.prefab` thành Component. Dep T201. (song song T202 được)
-- [ ] T204 coder — Entity prefabs (Cars, CashPickiUp, shieldIcon, Shield, sider, sider2, Buildings, Explosion, particle) + `EntityView`;
+- [x] T204 coder — Entity prefabs (Cars, CashPickiUp, shieldIcon, Shield, sider, sider2, Buildings, Explosion, particle) + `EntityView`;
       factory Phase 1 đổi sang `instantiate(prefab)`; prefab có anim gắn sẵn `FrameAnim` với frames đã điền. Dep T101, T102, T201.
-- [ ] T205 coder — `GameScreen.prefab` (layer tree + BG/water) với `@property` tới Hud/Popup/entity prefabs; `GameApp` `@property` screen prefabs,
+- [x] T205 coder — `GameScreen.prefab` (layer tree + BG/water) với `@property` tới Hud/Popup/entity prefabs; `GameApp` `@property` screen prefabs,
       wire trên Main.scene qua MCP. Dep T202–T204.
 - [x] T1xx tester — regression Phase 1 PASS (docs/reference/phase1/).
 - [ ] T206 tester — regression toàn bộ vs baseline (layout pixel, flow Menu→Game→Popup→Restart/Menu, mua/chọn boat, save).

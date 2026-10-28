@@ -1423,7 +1423,45 @@
       "__uuid__": "1f676200-5fd7-4776-bd66-e6cc2f8efe0d",
       "__expectedType__": "cc.Prefab"
     },
-    "_id": ""
+    "_id": "",
+    "entityPrefabs": [
+      {
+        "__uuid__": "baea2343-7c88-4618-8cab-4879cc1d901f",
+        "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "ff44e404-6f2c-4be7-b51a-5349bc819fde",
+        "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "83716150-1046-43b2-9cf6-221cba317b2e",
+        "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "f5ebb1d7-5ebe-4c29-833a-44649c7ecf69",
+        "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "1e87d581-7c77-4a72-94d8-f36c20daaa9d",
+        "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "ea72e20b-45ba-46bd-af09-b5a065c1f9ff",
+        "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "d44bd521-19d3-49b4-980f-92ba7492bd1b",
+        "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "b599c7ec-0784-4c8d-8c60-1df0ee945390",
+        "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "a4c56bba-ce6d-422f-9199-9719d437f69f",
+        "__expectedType__": "cc.Prefab"
+      }
+    ]
   },
   {
     "__type__": "cc.CompPrefabInfo",
