@@ -1,6 +1,7 @@
 import { Component, Node, _decorator } from 'cc';
 import { GameApp } from '../core/GameApp';
 import { Input } from '../core/Input';
+import { Pool } from '../core/Pool';
 import { Sfx } from '../core/Sfx';
 import { GameState } from '../core/Save';
 import { Hud } from '../game/Hud';
@@ -50,6 +51,7 @@ export class GameScreen extends Component {
     onDestroy(): void {
         Sfx.stopEngine();
         Input.clear();
+        Pool.clear();
     }
 
     private child(parent: Node, name: string): Node {

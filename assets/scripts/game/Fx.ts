@@ -1,13 +1,16 @@
 import { Color, Label, Node } from 'cc';
 import { random } from '../core/C3';
+import { FrameAnim } from '../core/FrameAnim';
+import { Pool } from '../core/Pool';
 import { makeLabel, placeC3, setOpacity } from '../core/UIKit';
 import { Entity, VP_Y } from './Entities';
 import { Particles } from './Particles';
 
 interface BonusText { label: Label; y: number; age: number; }
-interface FlyingBag { node: Node; x: number; y: number; age: number; }
+interface FlyingBag { node: Node; key: string; x: number; y: number; age: number; }
 
 const WATER = new Color(255, 255, 255);
+const BONUS_KEY = 'label:bonus';
 
 /** Explosion, bonus text, water spray and the flying cash bag. */
 export class Fx {
@@ -24,22 +27,33 @@ export class Fx {
     /** §6.5 EneDestroy explosion. */
     explode(x: number, y: number): void {
         const e = new Entity(this.top, 'Explosion', 0, x, y);
+        const anim = e.node.getComponent(FrameAnim) ?? e.node.addComponent(FrameAnim);
+        anim.def = 'Explosion';
+        anim.fps = 15;
+        anim.loop = false;
+        anim.onFrame = (f) => { e.frame = f; };
+        anim.play(0);
         e.scale = (y - VP_Y) / 150;
         this.explosions.push(e);
     }
 
     /** §6.5 Bonus(n) text. */
     bonusText(x: number, n: number): void {
-        const label = makeLabel(this.top, `+${n}`, x, 240, { size: 24, align: 'center', color: new Color(0, 255, 0) });
+        const node = Pool.get(BONUS_KEY, this.top, () =>
+            makeLabel(this.top, '', x, 240, { size: 24, align: 'center', color: new Color(0, 255, 0) }).node);
+        const label = node.getComponent(Label)!;
+        label.string = `+${n}`;
+        placeC3(node, x, 240);
+        setOpacity(node, 1);
         this.texts.push({ label, y: 240, age: 0 });
     }
 
     /** §6.7: move a picked-up bag (reparented keeping its on-screen place) toward the HUD dollar icon. */
-    flyBag(node: Node, screenX: number, screenY: number, screenScale: number): void {
+    flyBag(node: Node, key: string, screenX: number, screenY: number, screenScale: number): void {
         node.parent = this.ui;
         placeC3(node, screenX, screenY);
         node.setScale(screenScale, screenScale, 1);
-        this.bags.push({ node, x: screenX, y: screenY, age: 0 });
+        this.bags.push({ node, key, x: screenX, y: screenY, age: 0 });
     }
 
     /** §6.8 spray behind the boat: rate S*20/s, speed 100+S*60, 3 directions. */
@@ -67,7 +81,7 @@ export class Fx {
             e.x += s * (e.x - vpX) * dt;
             e.y += s * (e.y - VP_Y) * dt;
             e.scale = (e.y - VP_Y) / 150;
-            e.setFrame(Math.min(6, Math.floor(e.age * 15)));
+            e.node.getComponent(FrameAnim)!.setTime(e.age * 15);
             e.alpha = Math.max(0, 1 - e.age / 0.6);
             if (e.age >= 0.6) e.alive = false;
             e.sync(dt);
@@ -86,7 +100,7 @@ export class Fx {
             setOpacity(t.label.node, 1 - t.age);
         }
         this.texts = this.texts.filter((t) => {
-            if (t.age >= 1) t.label.node.destroy();
+            if (t.age >= 1) Pool.put(BONUS_KEY, t.label.node);
             return t.age < 1;
         });
     }
@@ -101,7 +115,7 @@ export class Fx {
             setOpacity(b.node, 1 - b.age / 2);
         }
         this.bags = this.bags.filter((b) => {
-            if (b.age >= 2) b.node.destroy();
+            if (b.age >= 2) Pool.put(b.key, b.node);
             return b.age < 2;
         });
     }

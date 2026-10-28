@@ -1,0 +1,21 @@
+# bake — dựng prefab bằng script (mirror UIKit)
+
+`sh .claude/tools/bake/bake.sh <spec.js> [Name]` → `assets/prefabs/<Name>.prefab` (Name mặc định = tên file spec).
+Cần Cocos editor mở project (MCP 21458). Idempotent: xoá prefab cũ, tạo lại, xoá node tạm; không save scene.
+Lưu ý: rebake đổi uuid prefab (delete + create) => wire `@property` SAU khi bake xong.
+
+Spec = thân hàm async, có sẵn `root` (node 854x480, anchor (0,1)) và `sprite, label, rect, group`; toạ độ C3 (y xuống):
+- `sprite(parent, def, x, y, {w,h,opacity,angle,mirror,frame,additive,color})` = UIKit.makeSprite (node tên = def)
+- `label(parent, text, x, y, {size,align,color})` = makeLabel (Arial bold, lineHeight 1.2x, overflow NONE)
+- `rect(parent, x, y, w, h, [r,g,b,a])` = makeRect (white.png tint, anchor (0,1))
+- `group(parent, name, {w,h,ax,ay,x,y})` = node rỗng; trả về node, dùng làm parent cho con.
+
+Ví dụ `_spike_spec.js`:
+
+    sprite(root, 'BG', -1, -2, { w: 904, h: 486 });
+    label(root, 'Score 123', 10, 20);
+    sprite(root, 'water', 802, 264, { opacity: 0.75, additive: true });
+
+Ghi chú: `additive` gán `db://assets/materials/additive.mtl` (SRC_ALPHA/ONE). uuid spriteFrame cache ở `.cache/uuids.json`
+(xoá nếu đổi/thêm texture). Không dùng literal `'/'` trong code scene (safety check chặn). Debug: `BAKE_DUMP=1` ghi `.cache/last.js`.
+`verify_spike.js` (scene): instantiate `_spike` và in lại size/anchor/scale/opacity/material.

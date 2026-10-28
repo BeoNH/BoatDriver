@@ -3,7 +3,8 @@ import { Every, choose, lerp, random, randomInt } from '../core/C3';
 import { Input } from '../core/Input';
 import { GameState } from '../core/Save';
 import { Sfx } from '../core/Sfx';
-import { makeSprite, setAdditive, setSpriteFrame } from '../core/UIKit';
+import { FrameAnim } from '../core/FrameAnim';
+import { makeSprite, setAdditive } from '../core/UIKit';
 import { SPRITE_DEFS } from '../data/SpriteDefs';
 import { Camera } from './Camera';
 import { Box, Entity, OverlapTracker, overlap, prune } from './Entities';
@@ -30,8 +31,7 @@ export class World {
     private bags: Entity[] = [];
     private shieldIcon: Entity | null = null;
     private water: Node;
-    private waterFrame = 0;
-    private waterT = 0;
+    private waterAnim: FrameAnim;
 
     gameOn = PLAYING;
     s = 1;
@@ -57,7 +57,11 @@ export class World {
         makeSprite(layers.bg, 'BG', 886, -2, { w: 904, h: 486 });
         this.water = makeSprite(layers.bg, 'water', 802, 264, { opacity: 0.75 });
         setAdditive(this.water);
-        this.applyWaterFrame(0);
+        this.waterAnim = this.water.addComponent(FrameAnim);
+        this.waterAnim.def = 'water';
+        this.waterAnim.fps = 15;
+        this.waterAnim.onFrame = (f) => this.applyWaterFrame(f);
+        this.waterAnim.play(0);
         this.road = new Road(layers.road, layers.buildings);
         this.player = new Player(layers.road, GameState.selectedBoat);
         this.fx = new Fx(layers.ground, layers.fx, layers.ui, hud.dollarPos);
@@ -219,7 +223,7 @@ export class World {
         Sfx.play('pointup', -10);
         this.bags = this.bags.filter((x) => x !== b);
         const sc = this.cam.toScreen(b.x, b.y);
-        this.fx.flyBag(b.node, sc.x, sc.y, b.scale * this.cam.zoom);
+        this.fx.flyBag(b.detach(), b.def, sc.x, sc.y, b.scale * this.cam.zoom);
     }
 
     private collectShield(icon: Entity): void {
@@ -314,15 +318,12 @@ export class World {
     }
 
     private updateWater(dt: number): void {
-        this.waterT += dt * this.s * 15;
-        const f = Math.floor(this.waterT) % SPRITE_DEFS['water'].frames.length;
-        if (f !== this.waterFrame) this.applyWaterFrame(f);
+        this.waterAnim.speed = this.s;
+        this.waterAnim.tick(dt);
     }
 
     /** Fixed 1604x194 display size regardless of the frame's own size. */
     private applyWaterFrame(f: number): void {
-        this.waterFrame = f;
-        setSpriteFrame(this.water, 'water', f);
         const fd = SPRITE_DEFS['water'].frames[f];
         this.water.setScale(1604 / fd.w, 194 / fd.h, 1);
     }

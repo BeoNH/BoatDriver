@@ -3,12 +3,12 @@ import { BOAT_COUNT, BOAT_PRICES } from '../data/GameConfig';
 import { SPRITE_DEFS } from '../data/SpriteDefs';
 import { GameApp } from '../core/GameApp';
 import { GameState } from '../core/Save';
+import { FrameAnim } from '../core/FrameAnim';
 import { Sfx } from '../core/Sfx';
 import { SinePulse, makeLabel, makeSprite, onTap, setAdditive, setSpriteFrame } from '../core/UIKit';
 
 const { ccclass } = _decorator;
 
-const WATER_FRAMES = 14;
 const WATER_FPS = 15;
 const WATER_W = 1605;
 const WATER_H = 217;
@@ -24,8 +24,7 @@ export class MenuScreen extends Component {
     private priceTxt!: Label;
     private cashTxt!: Label;
     private bestTxt!: Label;
-    private waterT = 0;
-    private waterFrame = -1;
+    private waterAnim!: FrameAnim;
     private shownCash = -1;
     private shownBest = -1;
 
@@ -34,7 +33,7 @@ export class MenuScreen extends Component {
         GameState.load();
         this.buildUI();
         this.refreshBoat();
-        this.updateWater(0);
+        this.waterAnim.play(0);
     }
 
     private buildUI(): void {
@@ -42,6 +41,13 @@ export class MenuScreen extends Component {
         makeSprite(root, 'BG', -2, -2, { w: 860, h: 486 });
         this.water = makeSprite(root, 'water', 381, 258, { w: WATER_W, h: WATER_H, opacity: 0.75 });
         setAdditive(this.water);
+        this.waterAnim = this.water.addComponent(FrameAnim);
+        this.waterAnim.def = 'water';
+        this.waterAnim.fps = WATER_FPS;
+        this.waterAnim.onFrame = (f) => {
+            const fd = SPRITE_DEFS['water'].frames[f];
+            this.water.setScale(WATER_W / fd.w, WATER_H / fd.h, 1);
+        };
         this.cars = makeSprite(root, 'Cars', 425, 408, { w: 127.8, h: 171.8, frame: GameState.selectedBoat });
         makeSprite(root, 'Title', 433, 135, { w: 355, h: 111.6 }).addComponent(SinePulse).setup(25, 1);
         this.btnPlay = makeSprite(root, 'btn_play', 428, 248, { w: 80, h: 80 });
@@ -108,18 +114,8 @@ export class MenuScreen extends Component {
         this.cashTxt.color = Color.WHITE;
     }
 
-    private updateWater(dt: number): void {
-        this.waterT += dt;
-        const f = Math.floor(this.waterT * WATER_FPS) % WATER_FRAMES;
-        if (f === this.waterFrame) return;
-        this.waterFrame = f;
-        setSpriteFrame(this.water, 'water', f);
-        const fd = SPRITE_DEFS['water'].frames[f];
-        this.water.setScale(WATER_W / fd.w, WATER_H / fd.h, 1);
-    }
-
     update(dt: number): void {
-        this.updateWater(dt);
+        this.waterAnim.tick(dt);
         if (GameState.cash !== this.shownCash) {
             this.shownCash = GameState.cash;
             this.cashTxt.string = String(GameState.cash);

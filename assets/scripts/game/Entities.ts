@@ -1,5 +1,6 @@
-import { Node } from 'cc';
-import { setOpacity, makeSprite, placeC3, setSpriteFrame } from '../core/UIKit';
+import { Node, UIOpacity, UITransform } from 'cc';
+import { Pool } from '../core/Pool';
+import { setOpacity, placeC3, setSpriteFrame } from '../core/UIKit';
 import { FrameDef, SPRITE_DEFS } from '../data/SpriteDefs';
 
 /** Vanishing point Y (GAME_SPEC §6.1). */
@@ -51,9 +52,23 @@ export class Entity {
     private k = 0;
     private div = 230;
     private lastOpacity = -1;
+    private released = false;
 
     constructor(parent: Node, readonly def: string, public frame = 0, public x = 0, public y = 0) {
-        this.node = makeSprite(parent, def, x, y, { frame });
+        // Node tái dùng được reset y hệt makeSprite tạo mới (frame/size/anchor, scale, angle, opacity, vị trí, layer).
+        // Material additive (Shield) được giữ vì pool theo key = def và mọi Entity cùng def dùng cùng blend.
+        const node = Pool.get(def, parent, () => {
+            const n = new Node(def);
+            n.addComponent(UITransform);
+            return n;
+        });
+        setSpriteFrame(node, def, frame);
+        node.setScale(1, 1, 1);
+        node.angle = 0;
+        const op = node.getComponent(UIOpacity);
+        if (op) op.opacity = 255;
+        placeC3(node, x, y);
+        this.node = node;
     }
 
     get fd(): FrameDef { return SPRITE_DEFS[this.def].frames[this.frame]; }
@@ -101,9 +116,18 @@ export class Entity {
         this.node.angle = -this.angle;
     }
 
+    /** Nhường node cho owner khác (ví dụ Fx.flyBag); owner chịu trách nhiệm Pool.put(def, node). */
+    detach(): Node {
+        this.alive = false;
+        this.released = true;
+        return this.node;
+    }
+
     destroy(): void {
         this.alive = false;
-        if (this.node.isValid) this.node.destroy();
+        if (this.released) return;
+        this.released = true;
+        Pool.put(this.def, this.node);
     }
 }
 
