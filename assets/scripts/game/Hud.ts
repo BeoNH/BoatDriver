@@ -22,7 +22,7 @@ export class Hud extends Component {
     /** Gọi ngay sau instantiate (trước/sau onLoad đều được). */
     init(onMenu: () => void): void {
         onTap(this.btnMenu, onMenu);
-        if (sys.isMobile) {
+        if (sys.isMobile || sys.hasFeature(sys.Feature.INPUT_TOUCH)) {
             this.touch = {
                 left: new HoldButton(this.leftBtn),
                 right: new HoldButton(this.rightBtn),

@@ -1,4 +1,4 @@
-import { Component, Node, Prefab, instantiate, _decorator } from 'cc';
+import { Component, Node, Prefab, instantiate, macro, view, _decorator } from 'cc';
 import { SCREEN_H, SCREEN_W } from '../data/GameConfig';
 import { Res } from './Res';
 import { GameState } from './Save';
@@ -23,6 +23,8 @@ export class GameApp extends Component {
 
     onLoad(): void {
         GameApp.instance = this;
+        // Ép landscape: web mobile cầm dọc thì engine xoay frame (pal screen-adapter isFrameRotated, touch được map lại).
+        view.setOrientation(macro.ORIENTATION_LANDSCAPE);
         // Node con tạo runtime: AudioSource không dính vào Canvas của scene (an toàn khi save lúc đang Game View).
         const audioHost = new Node('Audio');
         this.node.addChild(audioHost);
