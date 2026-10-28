@@ -2,7 +2,7 @@ import { builtinResMgr, Color, Component, gfx, Label, Material, Node, Sprite, Sp
 import { SPRITE_DEFS } from '../data/SpriteDefs';
 import { Res } from './Res';
 
-const { ccclass } = _decorator;
+const { ccclass, property } = _decorator;
 
 /**
  * Dựng UI theo toạ độ C3: parent là node có gốc ở góc trên-trái (anchor (0,1)), con đặt tại (x, -y).
@@ -121,23 +121,20 @@ export function onTap(node: Node, cb: () => void): void {
     node.on(Node.EventType.TOUCH_START, cb);
 }
 
-/** Behavior Sine "Size" của C3: kích thước dao động ±magnitude px quanh kích thước gốc. */
+/** Behavior Sine "Size" của C3: kích thước dao động ±magnitude px quanh kích thước gốc (base lấy từ node lúc onLoad). */
 @ccclass('SinePulse')
 export class SinePulse extends Component {
-    magnitude = 5;
-    period = 0.5;
+    @property magnitude = 5;
+    @property period = 0.5;
     private t = 0;
     private baseX = 1;
     private baseY = 1;
     private baseW = 1;
 
-    setup(magnitude: number, period: number): this {
-        this.magnitude = magnitude;
-        this.period = period;
+    onLoad(): void {
         this.baseX = this.node.scale.x;
         this.baseY = this.node.scale.y;
         this.baseW = Math.abs(this.node.getComponent(UITransform)!.width * this.baseX) || 1;
-        return this;
     }
 
     update(dt: number): void {

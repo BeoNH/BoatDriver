@@ -10,7 +10,7 @@ Spec = thân hàm async, có sẵn `root` (node 854x480, anchor (0,1)) và `spri
 - `rect(parent, x, y, w, h, [r,g,b,a])` = makeRect (white.png tint, anchor (0,1))
 - `group(parent, name, {w,h,ax,ay,x,y})` = node rỗng; trả về node, dùng làm parent cho con.
 
-Ví dụ `_spike_spec.js`:
+Ví dụ:
 
     sprite(root, 'BG', -1, -2, { w: 904, h: 486 });
     label(root, 'Score 123', 10, 20);
@@ -18,4 +18,4 @@ Ví dụ `_spike_spec.js`:
 
 Ghi chú: `additive` gán `db://assets/materials/additive.mtl` (SRC_ALPHA/ONE). uuid spriteFrame cache ở `.cache/uuids.json`
 (xoá nếu đổi/thêm texture). Không dùng literal `'/'` trong code scene (safety check chặn). Debug: `BAKE_DUMP=1` ghi `.cache/last.js`.
-`verify_spike.js` (scene): instantiate `_spike` và in lại size/anchor/scale/opacity/material.
+Component project (SinePulse, FrameAnim, MenuScreen...): trong spec `node.addComponent(cc.js.getClassByName('X'))` rồi gán field; spec lưu ở `specs/<Name>.js`.

@@ -1,0 +1,22 @@
+// Mirror của MenuScreen.buildUI cũ (GAME_SPEC §4). Root = MenuScreen component.
+const add = (n, cls, props) => { const c = n.addComponent(cc.js.getClassByName(cls)); Object.assign(c, props || {}); return c; };
+const lbl = (n, name) => { n.name = name; return n.getComponent(cc.Label); };
+const ms = add(root, 'MenuScreen');
+sprite(root, 'BG', -2, -2, { w: 860, h: 486 });
+const water = sprite(root, 'water', 381, 258, { w: 1605, h: 217, opacity: 0.75, additive: true });
+const waterAnim = add(water, 'FrameAnim', { def: 'water', fps: 15, loop: true });
+const cars = sprite(root, 'Cars', 425, 408, { w: 127.8, h: 171.8, frame: 0 });
+add(sprite(root, 'Title', 433, 135, { w: 355, h: 111.6 }), 'SinePulse', { magnitude: 25, period: 1 });
+const btnPlay = sprite(root, 'btn_play', 428, 248, { w: 80, h: 80 });
+add(btnPlay, 'SinePulse', { magnitude: 5, period: 0.5 });
+const btnBuy = sprite(root, 'btn_buy', 427, 248, { w: 196, h: 51 });
+const priceTxt = lbl(label(root, '', 387, 248), 'priceTxt');
+const btnLeft = sprite(root, 'btn_left', 261, 385, { w: 71, h: 77 });
+const btnRight = sprite(root, 'btn_right', 592, 385, { w: 71, h: 77 });
+sprite(root, 'UIbar', 428, 26, { w: 861, h: 51 });
+sprite(root, 'Logo', 422, 25, { w: 128, h: 27 });
+sprite(root, 'dollerIcon', 121.5, 25, { w: 25.5, h: 16.4, angle: 339.2 });
+const cashTxt = lbl(label(root, '', 146, 26), 'cashTxt');
+label(root, 'Best', 621, 25, { align: 'center' }).name = 'bestLabel';
+const bestTxt = lbl(label(root, '', 674, 25), 'bestTxt');
+Object.assign(ms, { water, waterAnim, cars, btnPlay, btnBuy, btnLeft, btnRight, priceTxt, cashTxt, bestTxt });

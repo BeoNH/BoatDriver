@@ -4,7 +4,7 @@ import { Input } from '../core/Input';
 import { GameState } from '../core/Save';
 import { Sfx } from '../core/Sfx';
 import { FrameAnim } from '../core/FrameAnim';
-import { makeSprite, setAdditive } from '../core/UIKit';
+import { setAdditive } from '../core/UIKit';
 import { SPRITE_DEFS } from '../data/SpriteDefs';
 import { Camera } from './Camera';
 import { Box, Entity, OverlapTracker, overlap, prune } from './Entities';
@@ -14,7 +14,7 @@ import { Controls, Player } from './Player';
 import { ResultData } from './ResultPopup';
 import { Road } from './Road';
 
-export interface Layers { bg: Node; buildings: Node; ground: Node; road: Node; fx: Node; ui: Node; }
+export interface Layers { bg: Node; buildings: Node; ground: Node; road: Node; fx: Node; ui: Node; water: Node; }
 export interface WorldHooks { onDamage(): void; }
 
 /** GameOn values (§6.1). */
@@ -53,13 +53,8 @@ export class World {
     private iconHit = new OverlapTracker();
 
     constructor(private layers: Layers, private hud: Hud, private hooks: WorldHooks) {
-        makeSprite(layers.bg, 'BG', -1, -2, { w: 904, h: 486 });
-        makeSprite(layers.bg, 'BG', 886, -2, { w: 904, h: 486 });
-        this.water = makeSprite(layers.bg, 'water', 802, 264, { opacity: 0.75 });
-        setAdditive(this.water);
-        this.waterAnim = this.water.addComponent(FrameAnim);
-        this.waterAnim.def = 'water';
-        this.waterAnim.fps = 15;
+        this.water = layers.water;
+        this.waterAnim = this.water.getComponent(FrameAnim)!;
         this.waterAnim.onFrame = (f) => this.applyWaterFrame(f);
         this.waterAnim.play(0);
         this.road = new Road(layers.road, layers.buildings);

@@ -5,75 +5,55 @@ import { GameApp } from '../core/GameApp';
 import { GameState } from '../core/Save';
 import { FrameAnim } from '../core/FrameAnim';
 import { Sfx } from '../core/Sfx';
-import { SinePulse, makeLabel, makeSprite, onTap, setAdditive, setSpriteFrame } from '../core/UIKit';
+import { onTap, setSpriteFrame } from '../core/UIKit';
 
-const { ccclass } = _decorator;
+const { ccclass, property } = _decorator;
 
-const WATER_FPS = 15;
 const WATER_W = 1605;
 const WATER_H = 217;
 const RED = new Color(255, 0, 0, 255);
 
-/** Màn Menu — GAME_SPEC §4. */
+/** Màn Menu — GAME_SPEC §4. Cây node từ MenuScreen.prefab (bake spec: .claude/tools/bake/specs/MenuScreen.js). */
 @ccclass('MenuScreen')
 export class MenuScreen extends Component {
-    private water!: Node;
-    private cars!: Node;
-    private btnPlay!: Node;
-    private btnBuy!: Node;
-    private priceTxt!: Label;
-    private cashTxt!: Label;
-    private bestTxt!: Label;
-    private waterAnim!: FrameAnim;
+    @property(Node) water: Node = null!;
+    @property(FrameAnim) waterAnim: FrameAnim = null!;
+    @property(Node) cars: Node = null!;
+    @property(Node) btnPlay: Node = null!;
+    @property(Node) btnBuy: Node = null!;
+    @property(Node) btnLeft: Node = null!;
+    @property(Node) btnRight: Node = null!;
+    @property(Label) priceTxt: Label = null!;
+    @property(Label) cashTxt: Label = null!;
+    @property(Label) bestTxt: Label = null!;
     private shownCash = -1;
     private shownBest = -1;
 
     onLoad(): void {
         Sfx.stopAll();
         GameState.load();
-        this.buildUI();
-        this.refreshBoat();
-        this.waterAnim.play(0);
-    }
-
-    private buildUI(): void {
-        const root = this.node;
-        makeSprite(root, 'BG', -2, -2, { w: 860, h: 486 });
-        this.water = makeSprite(root, 'water', 381, 258, { w: WATER_W, h: WATER_H, opacity: 0.75 });
-        setAdditive(this.water);
-        this.waterAnim = this.water.addComponent(FrameAnim);
-        this.waterAnim.def = 'water';
-        this.waterAnim.fps = WATER_FPS;
         this.waterAnim.onFrame = (f) => {
             const fd = SPRITE_DEFS['water'].frames[f];
             this.water.setScale(WATER_W / fd.w, WATER_H / fd.h, 1);
         };
-        this.cars = makeSprite(root, 'Cars', 425, 408, { w: 127.8, h: 171.8, frame: GameState.selectedBoat });
-        makeSprite(root, 'Title', 433, 135, { w: 355, h: 111.6 }).addComponent(SinePulse).setup(25, 1);
-        this.btnPlay = makeSprite(root, 'btn_play', 428, 248, { w: 80, h: 80 });
-        this.btnPlay.addComponent(SinePulse).setup(5, 0.5);
-        this.btnBuy = makeSprite(root, 'btn_buy', 427, 248, { w: 196, h: 51 });
-        this.priceTxt = makeLabel(root, '', 387, 248);
-        const left = makeSprite(root, 'btn_left', 261, 385, { w: 71, h: 77 });
-        const right = makeSprite(root, 'btn_right', 592, 385, { w: 71, h: 77 });
-        makeSprite(root, 'UIbar', 428, 26, { w: 861, h: 51 });
-        makeSprite(root, 'Logo', 422, 25, { w: 128, h: 27 });
-        makeSprite(root, 'dollerIcon', 121.5, 25, { w: 25.5, h: 16.4, angle: 339.2 });
-        this.cashTxt = makeLabel(root, '', 146, 26);
-        makeLabel(root, 'Best', 621, 25, { align: 'center' });
-        this.bestTxt = makeLabel(root, '', 674, 25);
-
-        onTap(left, () => this.changeBoat(GameState.selectedBoat > 0 ? GameState.selectedBoat - 1 : BOAT_COUNT - 1));
-        onTap(right, () => this.changeBoat(GameState.selectedBoat < BOAT_COUNT - 1 ? GameState.selectedBoat + 1 : 0));
+        this.showBoat(GameState.selectedBoat);
+        onTap(this.btnLeft, () => this.changeBoat(GameState.selectedBoat > 0 ? GameState.selectedBoat - 1 : BOAT_COUNT - 1));
+        onTap(this.btnRight, () => this.changeBoat(GameState.selectedBoat < BOAT_COUNT - 1 ? GameState.selectedBoat + 1 : 0));
         onTap(this.btnPlay, () => this.onPlay());
         onTap(this.btnBuy, () => this.onBuy());
+        this.refreshBoat();
+        this.waterAnim.play(0);
+    }
+
+    private showBoat(n: number): void {
+        setSpriteFrame(this.cars, 'Cars', n);
+        const fd = SPRITE_DEFS['Cars'].frames[n];
+        this.cars.setScale(127.8 / fd.w, 171.8 / fd.h, 1);
     }
 
     private changeBoat(n: number): void {
         GameState.selectedBoat = n;
-        setSpriteFrame(this.cars, 'Cars', n);
-        const fd = SPRITE_DEFS['Cars'].frames[n];
-        this.cars.setScale(127.8 / fd.w, 171.8 / fd.h, 1);
+        this.showBoat(n);
         this.refreshBoat();
     }
 

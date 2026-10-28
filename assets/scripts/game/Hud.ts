@@ -1,27 +1,37 @@
-import { Label, Node, sys } from 'cc';
+import { Component, Label, Node, _decorator, sys } from 'cc';
 import { HoldButton } from '../core/Input';
-import { makeLabel, makeSprite, onTap, setOpacity } from '../core/UIKit';
+import { onTap, setOpacity } from '../core/UIKit';
 
-const ICON_ANGLE = -20.8;
+const { ccclass, property } = _decorator;
 
-/** Fixed-to-screen HUD (§6.11) + mobile touch controls (§6.3). */
-export class Hud {
+/** Fixed-to-screen HUD (§6.11) + mobile touch controls (§6.3). Cây node từ Hud.prefab (spec: bake/specs/Hud.js). */
+@ccclass('Hud')
+export class Hud extends Component {
     /** Screen position the picked-up cash bag flies to. */
     readonly dollarPos = { x: 124, y: 24 };
-    private readonly cashTxt: Label;
-    private readonly scoreTxt: Label;
-    private readonly levelTxt: Label;
+    @property(Node) btnMenu: Node = null!;
+    @property(Label) cashTxt: Label = null!;
+    @property(Label) scoreTxt: Label = null!;
+    @property(Label) levelTxt: Label = null!;
+    @property(Node) leftBtn: Node = null!;
+    @property(Node) rightBtn: Node = null!;
+    @property(Node) brakeBtn: Node = null!;
+    @property(Node) accelBtn: Node = null!;
     private touch: Record<'left' | 'right' | 'brake' | 'accel', HoldButton> | null = null;
 
-    constructor(layer: Node, onMenu: () => void) {
-        makeSprite(layer, 'UIbar', 428, 25, { w: 861, h: 51 });
-        onTap(makeSprite(layer, 'Btn_Menu', 35, 30, { w: 55, h: 53 }), onMenu);
-        makeSprite(layer, 'dollerIcon', 124, 24, { w: 26.5, h: 17, angle: ICON_ANGLE });
-        this.cashTxt = makeLabel(layer, '0', 156, 26);
-        makeLabel(layer, 'Score :', 584, 23);
-        this.scoreTxt = makeLabel(layer, '0', 694, 23);
-        this.levelTxt = makeLabel(layer, '', 420, 25, { align: 'center' });
-        if (sys.isMobile) this.buildTouch(layer);
+    /** Gọi ngay sau instantiate (trước/sau onLoad đều được). */
+    init(onMenu: () => void): void {
+        onTap(this.btnMenu, onMenu);
+        if (sys.isMobile) {
+            this.touch = {
+                left: new HoldButton(this.leftBtn),
+                right: new HoldButton(this.rightBtn),
+                brake: new HoldButton(this.brakeBtn),
+                accel: new HoldButton(this.accelBtn),
+            };
+        } else {
+            for (const n of [this.leftBtn, this.rightBtn, this.brakeBtn, this.accelBtn]) n.active = false;
+        }
         this.refresh(0, 0, 0);
     }
 
@@ -47,16 +57,6 @@ export class Hud {
     hideTouch(): void {
         if (!this.touch) return;
         for (const b of this.touchButtons()) b.node.active = false;
-    }
-
-    private buildTouch(layer: Node): void {
-        const mk = (def: string, x: number, y: number, w: number, h: number) => new HoldButton(makeSprite(layer, def, x, y, { w, h, opacity: 0.75 }));
-        this.touch = {
-            left: mk('LeftTurn', 105, 407, 95, 104),
-            right: mk('rightTurn', 224, 407, 95, 104),
-            brake: mk('Brake', 643, 404, 106, 118),
-            accel: mk('accele', 776, 383, 103, 164),
-        };
     }
 
     private setText(lb: Label, s: string): void {
