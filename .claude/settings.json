@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash", "PowerShell", "Read", "Edit", "Write", "Glob", "Grep",
+      "WebFetch", "WebSearch", "NotebookEdit",
+      "mcp__cocos-boatdriver", "mcp__funplay_cocos"
+    ],
+    "deny": []
+  },
+  "enableAllProjectMcpServers": true
+}
