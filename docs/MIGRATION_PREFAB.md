@@ -51,9 +51,9 @@ object spawn liên tục đi qua pool. **Hành vi giữ 1:1 theo GAME_SPEC** —
 - [ ] T206 tester — regression toàn bộ vs baseline (layout pixel, flow Menu→Game→Popup→Restart/Menu, mua/chọn boat, save).
 
 ### Phase 3 — dọn
-- [ ] T301 chore — xoá code dựng tay không còn dùng trong UIKit/screens; giữ `placeC3`, `setSpriteFrame`, `SinePulse` nếu còn dùng.
-- [ ] T302 chore — cập nhật CLAUDE.md (Cấu trúc + Quy ước: prefab, pool, manager-driven update) và `.claude/map` nếu có.
-- [ ] T303 Opus — review diff cuối.
+- [x] T301 chore — xoá code dựng tay không còn dùng trong UIKit/screens; giữ `placeC3`, `setSpriteFrame`, `SinePulse` nếu còn dùng.
+- [x] T302 chore — cập nhật CLAUDE.md (Cấu trúc + Quy ước: prefab, pool, manager-driven update) và `.claude/map` nếu có.
+- [x] T303 Opus — review diff cuối.
 
 ## Rủi ro
 - Rebake xoá + tạo lại prefab → đổi uuid. Bake là one-shot; sau khi wire `@property`, prefab là nguồn sự thật, chỉnh trong editor.

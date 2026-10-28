@@ -4,17 +4,29 @@ Port 1:1 game "Boat Driver" (bản HTML5 Construct 3) sang Cocos. **Nguồn sự
 Không ads / analytics / network / URL ngoài.
 
 ## Cấu trúc
-- `assets/scenes/Main.scene` — Canvas (854×480 fitHeight) + Camera UI_2D + component `GameApp`. Scene duy nhất.
-- `assets/scripts/core/` — `GameApp` (chuyển màn), `Res` (preload resources), `Save` (`GameState` + localStorage),
-  `Sfx` (audio), `Input` (phím giữ, `HoldButton` touch), `UIKit` (makeSprite/makeLabel/onTap/SinePulse theo toạ độ C3),
+- `assets/scenes/Main.scene` — Canvas (854×480 fitHeight) + Camera UI_2D + component `GameApp`
+  (`@property menuPrefab/gamePrefab`). Scene duy nhất.
+- `assets/prefabs/` — màn (`MenuScreen`, `GameScreen`), UI (`Hud`, `ResultPopup`), entity (`Cars`, `CashPickiUp`, `shieldIcon`,
+  `Shield`, `sider`, `sider2`, `Buildings`, `Explosion`, `BonusText`). Entity prefab: root = sprite node, tên = def SPRITE_DEFS.
+  `assets/materials/additive.mtl` (water, Shield).
+- `assets/scripts/core/` — `GameApp` (instantiate màn), `Res` (preload resources), `Save` (`GameState` + localStorage),
+  `Sfx` (audio), `Input` (phím giữ, `HoldButton` touch), `UIKit` (placeC3/setSpriteFrame/setOpacity/onTap/SinePulse),
+  `Pool` (tái dùng node theo key), `FrameAnim` (anim chuỗi frame theo SPRITE_DEFS, owner gọi `tick`),
   `C3` (lerp, anglelerp, random, choose, `Every`).
-- `assets/scripts/screens/` — `MenuScreen`, `GameScreen` (component gắn lên node màn 854×480). Game chỉ endless: Menu → Game, không level/LevelSelect/Finish.
-- `assets/scripts/game/` — simulation + view của màn chơi (World, entities, HUD, popup).
+- `assets/scripts/screens/` — `MenuScreen`, `GameScreen` (component trên root prefab 854×480 anchor (0,1)). Game chỉ endless: Menu → Game, không level/LevelSelect/Finish.
+- `assets/scripts/game/` — simulation + view của màn chơi (World, entities + `EntityPrefabs` registry, Hud, ResultPopup).
 - `assets/scripts/data/` — `GameConfig` (bảng), `SpriteDefs` (generated: size/origin/image point gốc — không sửa tay).
 - `assets/resources/textures|audio` — load bằng `Res.frame('<file>')`, `Sfx.play('<name>', dB)`.
 
 ## Quy ước
-- Mọi thứ dựng bằng code, không prefab. Node màn có gốc trên-trái; đặt con bằng `placeC3(node, x, y)` (y xuống).
+- Node hiển thị đến từ prefab; ref qua `@property`. Node màn có gốc trên-trái; đặt con bằng `placeC3(node, x, y)` (y xuống).
+- Prefab mới: dựng bằng spec `.claude/tools/bake/specs/<Name>.js` + `sh .claude/tools/bake/bake.sh` (xem README).
+  Bake = one-shot: rebake đổi uuid → mất ref đã wire. Prefab đã wire thì chỉnh trong editor/MCP.
+- Entity mới: bake prefab tên = def, thêm vào `GameScreen.entityPrefabs`; spawn qua `new Entity(...)` (Pool + registry).
+- Manager-driven update: chỉ `GameScreen.update` (và `MenuScreen`) là Cocos `update`; World gọi xuống theo thứ tự spec §6.
+  Component gameplay (`FrameAnim`...) không tự `update`.
+- State tĩnh (Pool, EntityPrefabs, Input, engine) do `GameScreen.owner` quản: `destroy()` trễ cuối frame nên khi Restart
+  `onDestroy` màn cũ chạy sau `onLoad` màn mới.
 - Game logic chạy trong toạ độ C3 (y xuống, góc CW) rồi convert khi render (`setPosition(x,-y)`, `angle=-a`).
 - Port công thức đúng như spec (lerp theo dt, "Every X s" dùng `Every`). Không tự thêm cơ chế.
 - Không sửa `.meta`, `library/`, `temp/`. Scene chỉ sửa qua MCP.

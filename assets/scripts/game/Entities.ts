@@ -73,7 +73,7 @@ export class Entity {
     private released = false;
 
     constructor(parent: Node, readonly def: string, public frame = 0, public x = 0, public y = 0) {
-        // Node tái dùng được reset y hệt makeSprite tạo mới (frame/size/anchor, scale, angle, opacity, vị trí, layer).
+        // Node tái dùng được reset y hệt node prefab mới (frame/size/anchor, scale, angle, opacity, vị trí, layer).
         // Node từ prefab (additive của Shield nằm trong prefab); pool theo key = def.
         const node = Pool.get(def, parent, () => EntityPrefabs.create(def));
         setSpriteFrame(node, def, frame);
