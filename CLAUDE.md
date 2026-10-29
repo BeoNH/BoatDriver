@@ -1,7 +1,7 @@
 # BoatDriver — Cocos Creator 3.8.7 / TypeScript
 
 Port 1:1 game "Boat Driver" (bản HTML5 Construct 3) sang Cocos. **Nguồn sự thật: [docs/GAME_SPEC.md](docs/GAME_SPEC.md)**.
-Không ads / analytics. Network chỉ qua `core/NetworkManager` (portal: `/login`, `/saveScore`); không có `?token=` thì chơi offline.
+Không ads / analytics. Network chỉ qua `core/NetworkManager` (portal: `/login`, `/saveScore`, `/getRankList`, `/getHistory`); không có `?token=` thì chơi offline.
 
 ## Cấu trúc
 - `assets/scenes/Main.scene` — Canvas (854×480 fitHeight) + Camera UI_2D + component `GameApp`
@@ -14,6 +14,7 @@ Không ads / analytics. Network chỉ qua `core/NetworkManager` (portal: `/login
   `Pool` (tái dùng node theo key), `FrameAnim` (anim chuỗi frame theo SPRITE_DEFS, owner gọi `tick`),
   `C3` (lerp, anglelerp, random, choose, `Every`).
 - `assets/scripts/screens/` — `MenuScreen`, `GameScreen` (component trên root prefab 854×480 anchor (0,1)). Game chỉ endless: Menu → Game, không level/LevelSelect/Finish.
+- `assets/scripts/menu/` — popup Rank/History (`PopupBase` + API `/getRankList`, `/getHistory`).
 - `assets/scripts/game/` — simulation + view của màn chơi (World, entities + `EntityPrefabs` registry, Hud, ResultPopup).
 - `assets/scripts/data/` — `GameConfig` (bảng), `SpriteDefs` (generated từ C3: size/origin/image point gốc — không sửa số liệu; đã lọc def level/không dùng, generator không có trong repo).
 - `assets/resources/textures|audio` — load bằng `Res.frame('<file>')`, `Sfx.play('<name>', dB)`.

@@ -1,4 +1,4 @@
-import { Color, Component, Label, Node, _decorator } from 'cc';
+import { Color, Component, Label, Node, Prefab, _decorator, instantiate } from 'cc';
 import { BOAT_COUNT, BOAT_PRICES } from '../data/GameConfig';
 import { SPRITE_DEFS } from '../data/SpriteDefs';
 import { GameApp } from '../core/GameApp';
@@ -6,6 +6,8 @@ import { GameState } from '../core/Save';
 import { FrameAnim } from '../core/FrameAnim';
 import { Sfx } from '../core/Sfx';
 import { onTap, setSpriteFrame } from '../core/UIKit';
+import { PopupRank } from '../menu/PopupRank';
+import { PopupHistory } from '../menu/PopupHistory';
 
 const { ccclass, property } = _decorator;
 
@@ -26,6 +28,10 @@ export class MenuScreen extends Component {
     @property(Label) priceTxt: Label = null!;
     @property(Label) cashTxt: Label = null!;
     @property(Label) bestTxt: Label = null!;
+    @property(Node) btnRank: Node = null!;
+    @property(Node) btnHistory: Node = null!;
+    @property(Prefab) rankPrefab: Prefab = null!;
+    @property(Prefab) historyPrefab: Prefab = null!;
     private shownCash = -1;
     private shownBest = -1;
 
@@ -43,6 +49,25 @@ export class MenuScreen extends Component {
         onTap(this.btnBuy, () => this.onBuy());
         this.refreshBoat();
         this.waterAnim.play(0);
+        this.initPopups();
+    }
+
+    /** Popup Rank/History: thêm cuối (đè lên mọi thứ); bỏ qua nếu chưa wire. */
+    private initPopups(): void {
+        if (this.rankPrefab) {
+            const p = instantiate(this.rankPrefab);
+            this.node.addChild(p);
+            const rank = p.getComponent(PopupRank)!;
+            rank.init();
+            if (this.btnRank) onTap(this.btnRank, () => rank.open());
+        }
+        if (this.historyPrefab) {
+            const p = instantiate(this.historyPrefab);
+            this.node.addChild(p);
+            const hist = p.getComponent(PopupHistory)!;
+            hist.init();
+            if (this.btnHistory) onTap(this.btnHistory, () => hist.open());
+        }
     }
 
     private showBoat(n: number): void {

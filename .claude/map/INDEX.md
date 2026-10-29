@@ -8,6 +8,7 @@ Stack: Cocos Creator 3.8.7, TS (strict=false) | Run: mở editor → preview `ht
 | Scene | `assets/scenes/Main.scene` | Canvas 854×480 + `GameApp`. Scene duy nhất, sửa qua MCP |
 | Core | `assets/scripts/core/` | GameApp, Res, Save(GameState), NetworkManager, Sfx, Input, UIKit, Pool, FrameAnim, C3 |
 | Screens | `assets/scripts/screens/` | `MenuScreen`, `GameScreen` (component trên root prefab màn) |
+| Menu popups | `assets/scripts/menu/` | `PopupBase` (open→API→fill list), `PopupRank` (/getRankList), `PopupHistory` (/getHistory); prefab instantiate trong `MenuScreen.initPopups` |
 | Gameplay | `assets/scripts/game/` | `World` (sim), Road, Player, Entities, Camera, Fx, Particles, Hud, ResultPopup |
 | Data | `assets/scripts/data/` | `GameConfig` (stats/giá thuyền), `SpriteDefs` (generated, 642 dòng) |
 | Prefabs | `assets/prefabs/` | màn + UI + entity (root = sprite, tên = def) |
@@ -20,7 +21,7 @@ Stack: Cocos Creator 3.8.7, TS (strict=false) | Run: mở editor → preview `ht
 ## Entry points
 - `core/GameApp.ts` — component trên Canvas: ép landscape, letterbox (Camera.rect), `Sfx.init`, `GameState.load`, `login()` (async, không chặn), `Res.loadAll` → `go('Menu')`
 - `screens/GameScreen.ts` — owner state tĩnh; `update(dt)` duy nhất của gameplay → `World.update`
-- `screens/MenuScreen.ts` — chọn/mua thuyền, Play
+- `screens/MenuScreen.ts` — chọn/mua thuyền, Play, nút Rank/History → popup
 
 ## Key flows (details: ARCHITECTURE.md#flows)
 - Boot: GameApp.onLoad → Res.loadAll → swap(Menu prefab)
@@ -50,4 +51,5 @@ Stack: Cocos Creator 3.8.7, TS (strict=false) | Run: mở editor → preview `ht
 - Đổi chỉ số/giá thuyền → `data/GameConfig.ts`
 - Save keys → `core/Save.ts` (`'Boat DriversaveData'`: Cash, Best, SelectedCar, Car<n>)
 - Âm thanh → `Sfx.play('<file trong resources/audio>', dB)`; engine loop `Sfx.startEngine`
-- Network: `core/NetworkManager` (HTTP+WS client; chỉ dùng HTTP `/login`, `/saveScore`). Login ở `GameApp.login`, lưu `GameState.userName`; saveScore ở `World.grantReward`. Fire-and-forget, không retry.
+- Network: `core/NetworkManager` (HTTP+WS client; chỉ dùng HTTP `/login`, `/saveScore`). Login ở `GameApp.login`, lưu `GameState.userName`; saveScore ở `World.grantReward`. Fire-and-forget, không retry. Rank/History: `menu/Popup*` gọi `/getRankList`, `/getHistory` mỗi lần mở (offline → `OFFLINE`).
+- Ảnh UI popup/nút sinh bằng `.claude/tools/gen_popup_textures.py <textures_dir> <out_dir>` (khung từ `btn_play`/`Board`).
