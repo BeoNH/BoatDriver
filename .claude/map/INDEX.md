@@ -37,6 +37,7 @@ Stack: Cocos Creator 3.8.7, TS (strict=false) | Run: mở editor → preview `ht
 - Port đúng spec, không thêm cơ chế. Comment ghi `§x.y` của GAME_SPEC.
 - State tĩnh (Pool, EntityPrefabs, Input) chỉ do `GameScreen.owner` dọn (destroy trễ khi Restart).
 - Không tạo Texture2D/SpriteFrame runtime, không chỉnh engine global (`macro`, `dynamicAtlasManager`).
+- Ảnh trong `resources/textures` dùng Texture Compression preset `webp` (`settings/v2/packages/builder.json` → web: webp q80 + png q80 fallback). Ảnh mới: gán preset trong Inspector (hoặc `asset-db save-asset-meta` → `userData.compressSettings = {useCompressTexture:true, presetId:'webp'}`).
 
 ## Don't touch / generated
 - `data/SpriteDefs.ts` (generated, không sửa số; generator không có trong repo)
