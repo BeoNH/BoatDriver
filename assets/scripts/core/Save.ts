@@ -8,6 +8,7 @@ export class GameState {
     static cash = 0;
     static best = 0;
     static selectedBoat = 0;
+    static userName = '';
     private static dict: Record<string, number> = {};
 
     static load(): void {

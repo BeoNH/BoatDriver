@@ -26,3 +26,8 @@ _original_crawl/
 
 # bake cache
 .claude/tools/bake/.cache/
+
+# project-map
+.claude/map/_scan.*
+.claude/map/meta.json
+.claude/map/HANDOFF.md

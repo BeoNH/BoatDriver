@@ -1,7 +1,7 @@
 # BoatDriver — Cocos Creator 3.8.7 / TypeScript
 
 Port 1:1 game "Boat Driver" (bản HTML5 Construct 3) sang Cocos. **Nguồn sự thật: [docs/GAME_SPEC.md](docs/GAME_SPEC.md)**.
-Không ads / analytics / network / URL ngoài.
+Không ads / analytics. Network chỉ qua `core/NetworkManager` (portal: `/login`, `/saveScore`); không có `?token=` thì chơi offline.
 
 ## Cấu trúc
 - `assets/scenes/Main.scene` — Canvas (854×480 fitHeight) + Camera UI_2D + component `GameApp`
@@ -43,3 +43,8 @@ Không ads / analytics / network / URL ngoài.
 - `cocos-coder` (Sonnet): implement module theo brief. **Không tự test gameplay.**
 - `cocos-tester` (Sonnet): QA độc lập, read-only source, báo bug kèm repro.
 - `scout` / `chore` (Haiku): tìm code, sửa cơ học đã chỉ rõ.
+
+<!-- project-map -->
+@.claude/map/INDEX.md
+Deeper: .claude/map/ARCHITECTURE.md, .claude/map/MODULES.md (read only the section you need).
+<!-- /project-map -->

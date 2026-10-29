@@ -2,6 +2,7 @@ import { KeyCode, Node } from 'cc';
 import { Every, choose, lerp, random, randomInt } from '../core/C3';
 import { Input } from '../core/Input';
 import { GameState } from '../core/Save';
+import { NetworkManager } from '../core/NetworkManager';
 import { Sfx } from '../core/Sfx';
 import { FrameAnim } from '../core/FrameAnim';
 import { SPRITE_DEFS } from '../data/SpriteDefs';
@@ -296,6 +297,13 @@ export class World {
         this.reward = Math.round(this.score / 20);
         GameState.cash += this.reward;
         GameState.save();
+        if (GameState.userName) {
+            NetworkManager.instance.httpPost('/saveScore', {
+                username: GameState.userName,
+                score: this.score,
+                time: Math.round(this.clock),
+            });
+        }
     }
 
     // ---- §6.9 audio / water --------------------------------------------------------------------------------------

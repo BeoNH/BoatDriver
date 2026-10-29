@@ -1,5 +1,6 @@
 import { Camera, Canvas, Color, Component, Node, Prefab, Rect, instantiate, macro, screen, view, _decorator } from 'cc';
 import { SCREEN_H, SCREEN_W } from '../data/GameConfig';
+import { NetworkManager, urlParam } from './NetworkManager';
 import { Res } from './Res';
 import { GameState } from './Save';
 import { Sfx } from './Sfx';
@@ -34,10 +35,17 @@ export class GameApp extends Component {
         Sfx.init(audioHost);
         this.setupLetterbox();
         GameState.load();
+        this.login();
         Res.loadAll().then(() => {
             this.ready = true;
             this.go(this.pending ?? 'Menu');
         }).catch((e) => console.error('[GameApp] load resources failed', e));
+    }
+
+    /** Không chặn vào Menu: lỗi/không có token thì chơi offline, userName rỗng. */
+    private async login(): Promise<void> {
+        const login = await NetworkManager.instance.httpPost("/login", { token: urlParam("token") });
+        if (login) GameState.userName = login.username ?? '';
     }
 
     /** C3 "Go to layout" / "Restart layout" (gọi go với chính màn hiện tại). */
