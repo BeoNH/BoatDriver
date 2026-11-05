@@ -31,6 +31,7 @@ Key files:
 - `Particles.ts` — pool particle cố định (node prefab `Spray`).
 - `Hud.ts` — labels cash/score/distance, nút Menu, touch buttons (`HoldButton`, chỉ khi thiết bị có touch), `hideTouch`.
 - `ResultPopup.ts` — `init(onMenu, onRestart)`, `show(ResultData)`.
+- `PausePopup.ts` — `init(onYes, onNo)`, `show()`, `hide()`; prefab `pausePrefab` trên GameScreen.
 Depends on: core, data | Used by: screens
 Gotchas: không component gameplay nào tự `update`. Entity bị `detach()` thì owner mới phải `Pool.put`. Chỉ 1 enemy cùng lúc.
 

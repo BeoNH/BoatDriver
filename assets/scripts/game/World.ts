@@ -5,6 +5,7 @@ import { GameState } from '../core/Save';
 import { NetworkManager } from '../core/NetworkManager';
 import { Sfx } from '../core/Sfx';
 import { FrameAnim } from '../core/FrameAnim';
+import { ACCEL_MULT } from '../data/GameConfig';
 import { SPRITE_DEFS } from '../data/SpriteDefs';
 import { Camera } from './Camera';
 import { Box, Entity, OverlapTracker, overlap, prune } from './Entities';
@@ -131,7 +132,7 @@ export class World {
     private updateSpeed(dt: number, c: Controls, p: Player): void {
         const st = p.stats, cam = this.cam;
         if (c.accel) {
-            this.s = lerp(this.s, st.maxSpeed, st.acceleration * dt);
+            this.s = lerp(this.s, st.maxSpeed, st.acceleration * ACCEL_MULT * dt);
             this.camDelay = lerp(this.camDelay, 40, 2 * dt);
             cam.zoom = lerp(cam.zoom, 1.1, 2 * dt);
         }
@@ -285,12 +286,29 @@ export class World {
 
     private damage(): void {
         if (this.gameOn !== PLAYING) return;
+        this.endRun();
+        Sfx.play('crash');
+        this.hooks.onDamage();
+    }
+
+    /** Kết thúc lượt chơi chủ động (NO ở popup pause): lưu như thua, không crash/hook. */
+    quit(): void {
+        if (this.gameOn !== PLAYING) return;
+        this.endRun();
+    }
+
+    get isPlaying(): boolean { return this.gameOn === PLAYING; }
+
+    setEnginePaused(paused: boolean): void {
+        if (!this.engineOn) return;
+        if (paused) Sfx.stopEngine(); else Sfx.startEngine();
+    }
+
+    private endRun(): void {
         this.gameOn = LOST;
         this.grantReward();
         this.hud.hideTouch();
-        Sfx.play('crash');
         Sfx.stopEngine();
-        this.hooks.onDamage();
     }
 
     private grantReward(): void {

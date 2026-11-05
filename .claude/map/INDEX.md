@@ -8,8 +8,8 @@ Stack: Cocos Creator 3.8.7, TS (strict=false) | Run: mở editor → preview `ht
 | Scene | `assets/scenes/Main.scene` | Canvas 854×480 + `GameApp`. Scene duy nhất, sửa qua MCP |
 | Core | `assets/scripts/core/` | GameApp, Res, Save(GameState), NetworkManager, Sfx, Input, UIKit, Pool, FrameAnim, C3 |
 | Screens | `assets/scripts/screens/` | `MenuScreen`, `GameScreen` (component trên root prefab màn) |
-| Menu popups | `assets/scripts/menu/` | `PopupBase` (open→API→fill list), `PopupRank` (/getRankList), `PopupHistory` (/getHistory); prefab instantiate trong `MenuScreen.initPopups` |
-| Gameplay | `assets/scripts/game/` | `World` (sim), Road, Player, Entities, Camera, Fx, Particles, Hud, ResultPopup |
+| Menu popups | `assets/scripts/menu/` | `PopupBase` (open→API→fill list), `PopupRank` (/getRankList), `PopupHistory` (/getHistory), `GuidePopup` (hướng dẫn, nội dung tĩnh trong prefab); prefab instantiate trong `MenuScreen.initPopups` |
+| Gameplay | `assets/scripts/game/` | `World` (sim), Road, Player, Entities, Camera, Fx, Particles, Hud, ResultPopup, PausePopup |
 | Data | `assets/scripts/data/` | `GameConfig` (stats/giá thuyền), `SpriteDefs` (generated, 642 dòng) |
 | Prefabs | `assets/prefabs/` | màn + UI + entity (root = sprite, tên = def) |
 | Assets runtime | `assets/resources/textures`, `audio` | preload toàn bộ bởi `Res.loadAll` |
@@ -28,6 +28,7 @@ Stack: Cocos Creator 3.8.7, TS (strict=false) | Run: mở editor → preview `ht
 - Play: Menu.onPlay → GameState.save → GameApp.go('Game') → GameScreen.onLoad (register prefabs, Hud, Popup, new World)
 - Frame: GameScreen.update → World.update (road→player→score→enemy→pickups→shield→collisions→audio→water→cam→fx→sort) → cam.apply → hud.refresh
 - Thua: World.damage → reward=score/20, save, POST /saveScore (nếu có userName) → hooks.onDamage → sau 3s removePlayer + popup.show(result())
+- Pause: Hud.btnMenu → GameScreen.pause (world đóng băng, tắt engine) → YES resume | NO `World.quit` + ResultPopup ngay
 - Restart/Menu: `GameApp.go(...)` (defer 1 frame, destroy màn cũ, instantiate mới)
 
 ## Conventions

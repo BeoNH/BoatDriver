@@ -62,6 +62,7 @@ Logic:
 - `btn_buy`: Cash ≥ giá → `Car<n>=1`, Cash -= giá, save (Cash, SelectedCar), sound `cash`. Không đủ → CashTxt đỏ
   (255,0,0) 0.5 s rồi trắng.
 - `btn_play` → save SelectedCar, sang Game (LevelSelect đã bỏ — endless).
+- `btnGuide` (794,257) 64×64 (thêm mới, không có ở bản gốc) → GuidePopup: `popup_panel`, tiêu đề `"GUIDE"`, 6 dòng icon + text (lái, ga, phanh, vật cản, shield, tiền); `btn_close` đóng.
 
 ## 5. LevelSelect (854×480) (đã bỏ — endless)
 
@@ -185,14 +186,17 @@ Stats thuyền theo bảng §3. `Vpoint` = (706, 288).
 - Finishline (đã bỏ — endless): 396×187, origin (0.5,0.92), scale `(y-288)/55`, đi theo waydot; huỷ khi y > 490.
 
 ### 6.11 HUD & Popup
-- HUD (UI): `UIbar` (428,25) 861×51; `Btn_Menu` (35,30) 55×53 → Menu; `dollerIcon` (124,24) 26.5×17 góc -20.8°;
+- HUD (UI): `UIbar` (428,25) 861×51; `Btn_Menu` (35,30) 55×53 → GameOn=1: Pause; ngược lại → Menu; `dollerIcon` (124,24) 26.5×17 góc -20.8°;
   `CashTxt` (156,26) căn trái = Cash; `Txt "Score :"` (584,23) căn trái; `ScoreTxt` (694,23) căn trái = Score;
   `LevelTxt` tâm (420,25) = `"<DistanceMeter>m"` (`"Level N"` đã bỏ — endless).
 - Popup (ẩn lúc đầu): `Board` (415,266) 312×302; `"SCORE"` tâm (411,170); ScoreTxt tâm (411,226) = Score;
   BestTxt tâm (418,272) `"BEST   : N"` luôn hiện; `dollerIcon` (318,319) 39×25;
   `CashTxt` (354,318) căn trái = Cash; `RwCashTxt` (461,318) căn trái xanh lá = "+reward";
-  `Btn_Menu` (353,389) 91×88 → Menu; `Btn_restart` (489,389) 89×89: luôn frame 0 → chơi lại (frame 1 → LevelSelect đã bỏ — endless).
+  `Btn_Menu` (353,389) 91×88 → Menu; `Btn_restart` (489,389) 89×89: ảnh `Btn_replay` (thay frame 0 của bản gốc) → chơi lại (frame 1 → LevelSelect đã bỏ — endless).
   Nút popup có Sine size ±5 px chu kỳ 0.5 s. Click nút popup chỉ khi popup hiện.
+- PausePopup (thêm mới, không có ở bản gốc): `dim` chặn input; `Board_short` (427,240) 250×170; `"PAUSED"` tâm (424,197) size 20;
+  NO = `Btn_restart` (375,287) 72×72 ảnh back → kết thúc lượt như damage (reward, save, /saveScore) nhưng không crash/nổ, world đóng băng, hiện Popup ngay;
+  YES = `btn_play` (479,287) 72×72 → chạy tiếp. Khi pause: world không update, tắt engine loop.
 
 ## 7. Bỏ qua có chủ đích
 Ads/timescale pause, cheats (booster PowerUp=1, intangible, cheat keys), NitroIcon/NitroFlame (chỉ cheat), zombie/blood

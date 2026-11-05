@@ -6,6 +6,7 @@ import { Sfx } from '../core/Sfx';
 import { GameState } from '../core/Save';
 import { EntityPrefabs } from '../game/Entities';
 import { Hud } from '../game/Hud';
+import { PausePopup } from '../game/PausePopup';
 import { ResultPopup } from '../game/ResultPopup';
 import { World } from '../game/World';
 
@@ -25,6 +26,7 @@ export class GameScreen extends Component {
     @property(Node) water: Node = null!;
     @property(Prefab) hudPrefab: Prefab = null!;
     @property(Prefab) popupPrefab: Prefab = null!;
+    @property(Prefab) pausePrefab: Prefab = null!;
     /** Cars, CashPickiUp, shieldIcon, Shield, sider, sider2, Buildings, Explosion, BonusText (key = tên prefab). */
     @property([Prefab]) entityPrefabs: Prefab[] = [];
     /** Màn Game đang sở hữu state tĩnh (Pool, EntityPrefabs, Input, engine). Restart: node cũ bị destroy trễ
@@ -32,6 +34,9 @@ export class GameScreen extends Component {
     private static owner: GameScreen | null = null;
     private world!: World;
     private hud!: Hud;
+    private paused = false;
+    private pausePopup!: PausePopup;
+    private popup!: ResultPopup;
 
     onLoad(): void {
         GameScreen.owner = this;
@@ -42,11 +47,16 @@ export class GameScreen extends Component {
         const hudNode = instantiate(this.hudPrefab);
         this.uiLayer.addChild(hudNode);
         this.hud = hudNode.getComponent(Hud)!;
-        this.hud.init(goMenu);
+        this.hud.init(() => this.onHudMenu());
         const popupNode = instantiate(this.popupPrefab);
         this.popupLayer.addChild(popupNode);
         const popup = popupNode.getComponent(ResultPopup)!;
+        this.popup = popup;
         popup.init(goMenu, () => GameApp.instance.go('Game'));
+        const pauseNode = instantiate(this.pausePrefab);
+        this.popupLayer.addChild(pauseNode);
+        this.pausePopup = pauseNode.getComponent(PausePopup)!;
+        this.pausePopup.init(() => this.resume(), () => this.quitRun());
         this.world = new World({
             bg: this.bgLayer, buildings: this.buildingsLayer, ground: this.groundLayer,
             road: this.roadLayer, fx: this.fxLayer, ui: this.uiLayer, water: this.water,
@@ -59,9 +69,36 @@ export class GameScreen extends Component {
         this.world.cam.apply(this.worldRoot);
     }
 
+    private onHudMenu(): void {
+        if (!this.world.isPlaying) { GameApp.instance.go('Menu'); return; }
+        if (this.paused) return;
+        this.pause();
+    }
+
+    private pause(): void {
+        this.paused = true;
+        this.world.setEnginePaused(true);
+        this.pausePopup.show();
+    }
+
+    private resume(): void {
+        this.pausePopup.hide();
+        this.paused = false;
+        this.world.setEnginePaused(false);
+    }
+
+    /** NO: kết thúc lượt như thua (không crash), world giữ đóng băng sau popup kết quả. */
+    private quitRun(): void {
+        this.pausePopup.hide();
+        this.world.quit();
+        this.popup.show(this.world.result());
+    }
+
     update(dt: number): void {
-        this.world.update(Math.min(dt, 1 / 30));
-        this.world.cam.apply(this.worldRoot);
+        if (!this.paused) {
+            this.world.update(Math.min(dt, 1 / 30));
+            this.world.cam.apply(this.worldRoot);
+        }
         this.hud.refresh(GameState.cash, this.world.score, this.world.distance);
     }
 

@@ -8,6 +8,7 @@ import { Sfx } from '../core/Sfx';
 import { onTap, setSpriteFrame } from '../core/UIKit';
 import { PopupRank } from '../menu/PopupRank';
 import { PopupHistory } from '../menu/PopupHistory';
+import { GuidePopup } from '../menu/GuidePopup';
 
 const { ccclass, property } = _decorator;
 
@@ -32,6 +33,8 @@ export class MenuScreen extends Component {
     @property(Node) btnHistory: Node = null!;
     @property(Prefab) rankPrefab: Prefab = null!;
     @property(Prefab) historyPrefab: Prefab = null!;
+    @property(Node) btnGuide: Node = null!;
+    @property(Prefab) guidePrefab: Prefab = null!;
     private shownCash = -1;
     private shownBest = -1;
 
@@ -52,7 +55,7 @@ export class MenuScreen extends Component {
         this.initPopups();
     }
 
-    /** Popup Rank/History: thêm cuối (đè lên mọi thứ); bỏ qua nếu chưa wire. */
+    /** Popup Rank/History/Guide: thêm cuối (đè lên mọi thứ); bỏ qua nếu chưa wire. */
     private initPopups(): void {
         if (this.rankPrefab) {
             const p = instantiate(this.rankPrefab);
@@ -67,6 +70,13 @@ export class MenuScreen extends Component {
             const hist = p.getComponent(PopupHistory)!;
             hist.init();
             if (this.btnHistory) onTap(this.btnHistory, () => hist.open());
+        }
+        if (this.guidePrefab) {
+            const p = instantiate(this.guidePrefab);
+            this.node.addChild(p);
+            const guide = p.getComponent(GuidePopup)!;
+            guide.init();
+            if (this.btnGuide) onTap(this.btnGuide, () => guide.open());
         }
     }
 

@@ -11,6 +11,9 @@ export const BOAT_STATS: BoatStats[] = [
     { acceleration: 0.6, maxSpeed: 6, brake: 2, turning: 400 },
 ];
 
+/** Hệ số nhân `acceleration` khi giữ ga (lệch spec §6.3 có chủ đích: tăng tốc nhanh hơn bản gốc). 1 = đúng spec. */
+export const ACCEL_MULT = 5.2;
+
 export const BOAT_PRICES = [0, 150, 400, 600, 800, 1200];
 export const BOAT_COUNT = BOAT_PRICES.length;
 
